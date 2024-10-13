@@ -1,0 +1,59 @@
+{% extends 'flatpages/default.html' %}
+
+{% load i18n %}
+{% load tz %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% load cache %} <!-- Загружаем кэширование -->
+{% cache 30 header %} <!-- Кэшируем отдельный блок на 30 секунд -->
+{% block header %}
+{% endblock header %}
+{% endcache %}
+
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+<h1>Все объявления</h1>
+<form action="" method="get">
+    {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+    {{ filterset.form.as_p }}
+    {# Добавим кнопку отправки данных формы #}
+    <input type="submit" value="Найти"/>
+</form>
+
+<h3>{{ time_now|date:'M d Y' }}</h3>
+<!-- Если в переменной next_sale будет None,
+то выведется указанный в фильтре текст -->
+<h3> {{ next_sale|default_if_none:"Чуть позже сообщим о новых объявлениях!" }} </h3>
+<h3>Количество объявлений: {{ post|length }}</h3>
+<hr>
+{% if post %}
+<table style="font-size: 20px;">
+    <tr>
+        <td>Заголовок</td>
+        <td>Категории</td>
+        <td>Текст</td>
+        <td>Дата выпуска</td>
+    </tr>
+
+    {% for post in post %}
+
+    <tr>
+        <td>
+            <a href="{% url 'post_detail' post.id %}">{{ post.header }}</a>
+        </td>
+<!--        <td>{{ post.header|censor }}</td>-->
+        <td>{{ post.category }}</td>
+        <td>{{ post.text|truncatechars:100|censor }}</td>
+        <td>{{ post.create_time|date:'M d Y' }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+{% else %}
+<h2>Объявлений нет!</h2>
+{% endif %}
+{% endblock content %}

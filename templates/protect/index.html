@@ -1,0 +1,57 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+<div> Здесь может содержаться персональная информация для каждого пользователя</div>
+<h2>
+    <form action="" method="get">
+        {{ filterset.form }}
+        <input type="submit" value="Найти">
+    </form>
+
+    <button><a href='/'>Сбросить фильтр</a></button>
+</h2>
+<hr>
+<hr4>Отклики:</hr4>
+{% if comments %}
+{% for comment in comments %}
+<p>{{ comment.user }}</p>
+<p>{{ comment.comm_text }}</p>
+{% endfor %}
+{% endif %}
+
+<h4>
+    <tr>
+        <th>Текст        |</th>
+        <th> Статус</th>
+    </tr>
+    {% for comment in comments %}
+    <tr>
+        <p>
+            <th>{{ comment.preview }}</th>
+        </p>
+        {% if comment.status == 'pending' %}
+        <p>
+            <th><a href="{% url 'accept' comment.id %}">Принять</a></th>
+        </p>
+        <p>
+            <th><a href="{% url 'reject' comment.id %}">Отклонить</a></th>
+        </p>
+    </tr>
+    {% else %}
+    <th>{{ comment.get_status_display }}</th>
+    {% endif %}
+    {% endfor %}
+    </table></h4>
+
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <h2>
+        <input type="submit" value="Выйти">
+    </h2>
+
+</form>
+
+
+{% endblock %}

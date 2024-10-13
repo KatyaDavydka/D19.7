@@ -1,0 +1,48 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Объявления
+{% endblock title %}
+
+{% block content %}
+<h1></h1>
+<h3>{{ time_now|date:'M d Y' }}</h3>
+<!-- Если в переменной next_sale будет None,
+то выведется указанный в фильтре текст -->
+<h3> {{ next_sale|default_if_none:"Чуть позже сообщим о новых объявлениях!" }} </h3>
+<hr>
+{% if post %}
+<table>
+    <tr>
+        <td>Заголовок</td>
+        <td>Категория</td>
+        <td>Текст</td>
+        <td>Дата выпуска</td>
+    </tr>
+
+    <tr>
+        <td>
+            <a href="{% url 'post' %}">{{ post.header }}</a>
+        </td>
+<!--        <td>{{ post.header }}</td>-->
+        <td>{{ post.category }}</td>
+        <td>{{ post.text }}</td>
+        <td>{{ post.create_time|date:'M d Y' }}</td>
+    </tr>
+</table>
+{% else %}
+<h2>Объявлений нет!</h2>
+{% endif %}
+<div
+        class="form-comment">
+    <h3> Оставить комментарий </h3>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Save"/>
+    </form>
+</div>
+
+{% endblock content %}
+
+
